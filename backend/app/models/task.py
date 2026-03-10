@@ -1,14 +1,14 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-
+from enum import Enum
 from uuid import UUID, uuid4
 
-from enum import Enum
 
 class TaskStatus(str, Enum):
     TODO = "TODO"
     IN_PROGRESS = "IN_PROGRESS"
     DONE = "DONE"
+
 
 @dataclass
 class Task:
