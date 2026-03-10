@@ -3,3 +3,4 @@ fastapi-utils
 uvicorn[standard]
 pydantic
 python-dotenv
+typing-inspect

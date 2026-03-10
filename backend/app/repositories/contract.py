@@ -16,11 +16,7 @@ class ContractTaskRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def create(self, task: Task) -> Task:
-        raise NotImplementedError
-
-    @abstractmethod
-    def update(self, id: UUID, task: Task) -> Task:
+    def save(self, task: Task) -> Task:
         raise NotImplementedError
 
     @abstractmethod

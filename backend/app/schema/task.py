@@ -6,13 +6,9 @@ from pydantic import BaseModel
 from app.models.task import TaskStatus
 
 
-class CreateTaskRequest(BaseModel):
+class CreateOrUpdateTaskRequest(BaseModel):
+    id: UUID | None = None
     title: str
-    description: str | None = None
-
-
-class UpdateTaskRequest(BaseModel):
-    title: str | None = None
     description: str | None = None
     status: TaskStatus | None = None
 

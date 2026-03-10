@@ -33,7 +33,7 @@ class TaskRepository(ContractTaskRepository):
 
     def _to_dict(self, task: Task) -> Dict:
         return {
-            "id": task.id,
+            "id": str(task.id),
             "title": task.title,
             "description": task.description,
             "status": task.status.value,
@@ -48,14 +48,14 @@ class TaskRepository(ContractTaskRepository):
     def get_by_id(self, id: UUID) -> Task | None:
         data = self._load()
         for item in data:
-            if item["id"] == id:
+            if item["id"] == str(id):
                 return self._to_model(item)
         return None
 
     def save(self, task: Task) -> Task:
         tasks = self._load()
         for i, item in enumerate(tasks):
-            if item["id"] == task.id:
+            if item["id"] == str(task.id):
                 tasks[i] = self._to_dict(task)
                 self._dump(tasks)
                 return task
@@ -65,5 +65,5 @@ class TaskRepository(ContractTaskRepository):
 
     def delete(self, id: UUID) -> None:
         tasks = self._load()
-        tasks = [item for item in tasks if item["id"] != id]
+        tasks = [item for item in tasks if item["id"] != str(id)]
         self._dump(tasks)
