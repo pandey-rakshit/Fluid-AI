@@ -12,7 +12,7 @@ class ContractTaskRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_by_id(self, id: int) -> Task | None:
+    def get_by_id(self, id: UUID) -> Task | None:
         raise NotImplementedError
 
     @abstractmethod
@@ -20,9 +20,9 @@ class ContractTaskRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def update(self, id: int, task: Task) -> Task:
+    def update(self, id: UUID, task: Task) -> Task:
         raise NotImplementedError
 
     @abstractmethod
-    def delete(self, id: int) -> None:
+    def delete(self, id: UUID) -> None:
         raise NotImplementedError
