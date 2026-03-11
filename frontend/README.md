@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fluid AI — Frontend
 
-## Getting Started
+Next.js web application for the Task Manager — list, create, edit, and delete tasks with a clean dark/light interface.
 
-First, run the development server:
+**Live App** → [fluid-ai-yqba.vercel.app/tasks](https://fluid-ai-yqba.vercel.app/tasks)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## Project Structure
+
+```
+frontend/
+├── app/
+│   ├── layout.tsx                      # Root layout, fonts, Font Awesome, ThemeProvider
+│   ├── page.tsx                        # Redirects to /tasks
+│   ├── globals.css                     # Tailwind, CSS variables, theme tokens
+│   └── tasks/
+│       ├── page.tsx                    # Tasks page — state, API calls, layout
+│       └── _components/
+│           ├── TaskList.tsx            # Filter tabs + task list container
+│           ├── TaskCard.tsx            # Individual task row
+│           ├── TaskForm.tsx            # Create / edit form (inline)
+│           ├── DeleteButton.tsx
+|           └── ToggleThemeButton.tsx   # Dark/light/system toggle
+├── libs/
+│   └── api.ts                          # All fetch calls to the FastAPI backend
+└── types/
+    └── task.ts                          # Task types, TaskStatus, STATUS_CONFIG
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Create, edit, and delete tasks
+- Task status — `todo`, `in_progress`, `done`
+- Filter tasks by status
+- Progress bar tracking completion
+- Dark / light / system theme toggle
+- Animated task rows on load
+- Inline create and edit forms
+- Error state handling
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Local Development
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Prerequisites:** Node.js 18+, npm
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+cd frontend
 
-## Deploy on Vercel
+# Install dependencies
+npm install
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Run development server
+npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+App available at `http://localhost:3000`
+
+---
+
+## Environment Variables
+
+Create a `.env.local` file in the `frontend/` directory:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | Base URL of the FastAPI backend |
+
+---
+
+## Tech Stack
+
+| | |
+|---|---|
+| Framework | Next.js 14 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| Icons | Font Awesome 6 |
+| Fonts | Outfit, IBM Plex Mono (Google Fonts) |
+| Theme | next-themes |
+| HTTP | Native `fetch` |
+
+---
+
+## Deployment (Vercel)
+
+1. Push to GitHub
+2. Import repo in [vercel.com](https://vercel.com)
+3. Add environment variable in dashboard:
+
+| Key | Value |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | Your deployed backend URL |
+
+Vercel auto-detects Next.js — no build configuration needed.
+
+---
+
+## Author
+
+**Rakshit Pandey**
+[github.com/pandey-rakshit](https://github.com/pandey-rakshit) · [linkedin.com/in/pandey-rakshit](https://linkedin.com/in/pandey-rakshit)
