@@ -40,9 +40,9 @@ export default function TaskForm({ onSave, onCancel, initial = null }: TaskFormP
             />
             <div className="flex items-center gap-2">
                 <select value={status} onChange={(e) => setStatus(e.target.value as TaskStatus)} className={`${base} w-auto cursor-pointer`}>
-                    <option value="todo">To Do</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="done">Done</option>
+                    <option value="TODO">To Do</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="DONE">Done</option>
                 </select>
                 <div className="flex gap-2 ml-auto">
                     <button

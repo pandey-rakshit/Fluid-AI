@@ -33,7 +33,7 @@ export default function TaskList({
     const { resolvedTheme } = useTheme();
     const dark = resolvedTheme === "dark";
 
-    const filtered = tasks.filter((t) => filter === "all" || t.status === filter);
+    const filtered = tasks.filter((t) => filter === "ALL" || t.status === filter);
 
     return (
         <div>

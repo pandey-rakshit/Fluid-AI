@@ -24,12 +24,5 @@ export const saveTask = (data: CreateOrUpdateTaskRequest): Promise<Task> =>
         body: JSON.stringify(data),
     }).then(handleResponse<Task>);
 
-export const updateTask = (id: string, data: CreateOrUpdateTaskRequest): Promise<Task> =>
-    fetch(`${BASE_URL}/api/v1/tasks/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-    }).then(handleResponse<Task>);
-
 export const deleteTask = (id: string): Promise<void> =>
     fetch(`${BASE_URL}/api/v1/tasks/${id}`, { method: "DELETE" }).then(handleResponse<void>);

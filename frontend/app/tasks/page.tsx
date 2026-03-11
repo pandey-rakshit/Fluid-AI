@@ -1,45 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Task, CreateOrUpdateTaskRequest } from "@/types/task";
 import TaskList from "./_components/TaskList";
 import { ThemeToggle } from "@/app/tasks/_components/ToggleThemeButton";
-
-const MOCK_TASKS: Task[] = [
-    { id: "1", title: "Design system architecture", description: "Plan the folder structure and data flow", status: "DONE", created_at: "2026-03-01T10:00:00Z", updated_at: "2026-03-01T10:00:00Z" },
-    { id: "2", title: "Build repository layer", description: "File-based storage with JSON", status: "IN_PROGRESS", created_at: "2026-03-05T09:00:00Z", updated_at: "2026-03-05T09:00:00Z" },
-    { id: "3", title: "Write API endpoints", description: "CRUD with FastAPI and CBV pattern", status: "IN_PROGRESS", created_at: "2026-03-08T14:00:00Z", updated_at: "2026-03-08T14:00:00Z" },
-    { id: "4", title: "Setup CI/CD pipeline", description: null, status: "TODO", created_at: "2026-03-10T08:00:00Z", updated_at: "2026-03-10T08:00:00Z" },
-    { id: "5", title: "Add Firebase integration", description: "Migrate from file storage to Firestore", status: "TODO", created_at: "2026-03-11T11:00:00Z", updated_at: "2026-03-11T11:00:00Z" },
-];
+import { getTasks, saveTask, deleteTask } from "@/libs/api";
 
 export default function TasksPage() {
     const { resolvedTheme } = useTheme();
-    const dark = resolvedTheme === "dark";
 
-    const [tasks, setTasks] = useState<Task[]>(MOCK_TASKS);
+    const [tasks, setTasks] = useState<Task[]>([]);
     const [filter, setFilter] = useState("ALL");
     const [showForm, setShowForm] = useState(false);
     const [editingTask, setEditingTask] = useState<Task | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => setMounted(true), []);
+
+    const dark = mounted ? resolvedTheme === "dark" : false;
+
+    useEffect(() => {
+        getTasks().then(setTasks).catch((e) => setError(e.message)).finally(() => setLoading(false));
+    }, [])
 
     const counts = {
-        all: tasks.length,
-        todo: tasks.filter((t) => t.status === "TODO").length,
-        in_progress: tasks.filter((t) => t.status === "IN_PROGRESS").length,
-        done: tasks.filter((t) => t.status === "DONE").length,
+        ALL: tasks.length,
+        TODO: tasks.filter((t) => t.status === "TODO").length,
+        IN_PROGRESS: tasks.filter((t) => t.status === "IN_PROGRESS").length,
+        DONE: tasks.filter((t) => t.status === "DONE").length,
     };
 
-    const handleSave = (data: CreateOrUpdateTaskRequest) => {
-        if (editingTask) {
-            setTasks((prev) => prev.map((t) => t.id === editingTask.id ? { ...t, ...data } : t));
-            setEditingTask(null);
-        } else {
-            const newTask: Task = { ...data, id: String(Date.now()), status: data.status || "TODO", description: data.description || null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
-            setTasks((prev) => [...prev, newTask]);
-            setShowForm(false);
+    const handleSave = async (data: CreateOrUpdateTaskRequest) => {
+        try {
+            if (editingTask) {
+                const updated = await saveTask({ ...data, id: editingTask.id });
+                setTasks((prev) => prev.map((t) => t.id === editingTask.id ? updated : t));
+                setEditingTask(null);
+            } else {
+                const created = await saveTask(data);
+                setTasks((prev) => [...prev, created]);
+                setShowForm(false);
+            }
+        } catch (e: any) {
+            setError(e.message);
         }
     };
+
+    const handleDelete = async (id: string) => {
+        try {
+            await deleteTask(id);
+            setTasks((prev) => prev.filter((t) => t.id !== id));
+        } catch (e: any) {
+            setError(e.message)
+        }
+    }
 
     return (
         <>
@@ -58,7 +75,7 @@ export default function TasksPage() {
                         <div>
                             <h1 className="text-2xl font-semibold tracking-tight">Tasks</h1>
                             <p className={`text-sm mt-0.5 font-mono ${dark ? "text-zinc-500" : "text-zinc-400"}`}>
-                                {counts.done}/{counts.all} completed
+                                {counts.DONE}/{counts.ALL} completed
                             </p>
                         </div>
                         <div className="flex items-center gap-2">
@@ -74,33 +91,50 @@ export default function TasksPage() {
                         </div>
                     </div>
 
-                    {/* Progress bar */}
-                    <div className={`w-full h-1 rounded-full mb-6 ${dark ? "bg-zinc-800" : "bg-zinc-200"}`}>
-                        <div
-                            className="h-1 rounded-full bg-emerald-400 transition-all duration-700"
-                            style={{ width: counts.all ? `${(counts.done / counts.all) * 100}%` : "0%" }}
-                        />
-                    </div>
+                    {/* Error */}
+                    {error && (
+                        <div className="mb-4 px-4 py-3 rounded-lg border border-red-800 bg-red-900/20 text-red-400 text-sm font-mono">
+                            <i className="fa-solid fa-circle-exclamation mr-2" />
+                            {error}
+                        </div>
+                    )}
 
-                    <TaskList
-                        tasks={tasks}
-                        filter={filter}
-                        editingTask={editingTask}
-                        showForm={showForm}
-                        counts={counts}
-                        onFilterChange={setFilter}
-                        onSave={handleSave}
-                        onDelete={(id) => setTasks((prev) => prev.filter((t) => t.id !== id))}
-                        onEdit={(task) => { setEditingTask(task); setShowForm(false); }}
-                        onCancelForm={() => setShowForm(false)}
-                        onCancelEdit={() => setEditingTask(null)}
-                    />
+                    {/* Loading */}
+                    {loading ? (
+                        <div className={`text-center py-16 text-sm font-mono ${dark ? "text-zinc-600" : "text-zinc-400"}`}>
+                            <i className="fa-solid fa-spinner fa-spin text-2xl mb-3 block" />
+                            Loading tasks...
+                        </div>
+                    ) : (
+                        <>
+                            {/* Progress bar */}
+                            <div className={`w-full h-1 rounded-full mb-6 ${dark ? "bg-zinc-800" : "bg-zinc-200"}`}>
+                                <div
+                                    className="h-1 rounded-full bg-emerald-400 transition-all duration-700"
+                                    style={{ width: counts.ALL ? `${(counts.DONE / counts.ALL) * 100}%` : "0%" }}
+                                />
+                            </div>
 
-                    {/* Footer */}
-                    {tasks.length > 0 && (
-                        <p className={`text-center text-xs font-mono mt-8 ${dark ? "text-zinc-700" : "text-zinc-300"}`}>
-                            {counts.todo} remaining · {counts.in_progress} in progress
-                        </p>
+                            <TaskList
+                                tasks={tasks}
+                                filter={filter}
+                                editingTask={editingTask}
+                                showForm={showForm}
+                                counts={counts}
+                                onFilterChange={setFilter}
+                                onSave={handleSave}
+                                onDelete={handleDelete}
+                                onEdit={(task) => { setEditingTask(task); setShowForm(false); }}
+                                onCancelForm={() => setShowForm(false)}
+                                onCancelEdit={() => setEditingTask(null)}
+                            />
+
+                            {tasks.length > 0 && (
+                                <p className={`text-center text-xs font-mono mt-8 ${dark ? "text-zinc-700" : "text-zinc-300"}`}>
+                                    {counts.TODO} remaining · {counts.IN_PROGRESS} in progress
+                                </p>
+                            )}
+                        </>
                     )}
                 </div>
             </main>

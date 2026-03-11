@@ -34,7 +34,7 @@ export default function TaskCard({ task, index, onDelete, onEdit }: TaskCardProp
 
             <div className="flex-1 min-w-0">
                 <p className={`text-sm font-medium truncate ${task.status === "DONE"
-                    ? dark ? "line-through text-zinc-500" : "line-through text-zinc-400"
+                    ? dark ? "line-through text-zinc-400" : "line-through text-zinc-400"
                     : dark ? "text-zinc-100" : "text-zinc-800"
                     }`}>
                     {task.title}
