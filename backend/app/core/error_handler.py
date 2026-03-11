@@ -1,9 +1,6 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
-<<<<<<< Updated upstream
-=======
 from fastapi.exceptions import RequestValidationError
->>>>>>> Stashed changes
 
 from app.core.exceptions import AppBaseException
 
@@ -16,8 +13,6 @@ async def app_exception_handler(request: Request, exc: AppBaseException) -> JSON
             "message": exc.message,
             "path": request.url.path,
         },
-<<<<<<< Updated upstream
-=======
     )
 
 async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
@@ -29,5 +24,4 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
             "path": request.url.path,
             "details": exc.errors(),
         },
->>>>>>> Stashed changes
     )

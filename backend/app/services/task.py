@@ -33,11 +33,7 @@ class TaskService:
                 setattr(task, field, value)
             task.updated_at = datetime.now(timezone.utc)
         else:
-<<<<<<< Updated upstream
-            task = Task(title=params.title, description=params.description)
-=======
             task = Task(title=params.title, description=params.description, status=params.status)
->>>>>>> Stashed changes
 
         return self._repo.save(task)
 
