@@ -26,7 +26,10 @@ class TaskController:
     @router.post("/", response_model=TaskResponse, status_code=200)
     def save_task(self, params: CreateOrUpdateTaskRequest):
         task_id = getattr(params, "id", None)
+<<<<<<< Updated upstream
         print(task_id)
+=======
+>>>>>>> Stashed changes
         return self.service.save(params, task_id=task_id)
 
     @router.delete("/{task_id}", status_code=204)
