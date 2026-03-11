@@ -8,7 +8,30 @@
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "main.py"
+            "dest": "main.py",
+        }
+    ],
+    "headers": [
+        {
+            "source": "/api/(.*)",
+            "headers": [
+                {
+                    "key": "Access-Control-Allow-Credentials",
+                    "value": "true"
+                },
+                {
+                    "key": "Access-Control-Allow-Origin",
+                    "value": "https://fluid-ai-yqba-boqrgk4jz-pandeyrakshits-projects.vercel.app"
+                },
+                {
+                    "key": "Access-Control-Allow-Methods",
+                    "value": "GET,DELETE,POST"
+                },
+                {
+                    "key": "Access-Control-Allow-Headers",
+                    "value": "Content-Type, Authorization"
+                }
+            ]
         }
     ]
 }
