@@ -2,5 +2,6 @@ fastapi
 fastapi-utils
 uvicorn[standard]
 pydantic
+pydantic-settings
 python-dotenv
 typing-inspect
